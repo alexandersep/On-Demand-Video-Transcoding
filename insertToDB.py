@@ -13,7 +13,7 @@ def maybe_add_gather_file_and_info():
             break;
         currently_getting_info = True
         while (currently_getting_info):
-            maybe_name_file("What is the name of your file?")
+            bool_and_file_name = maybe_name_file("What is the name of your file?")
             bool_and_file_scale = is_get_info_on_arr("What resolution is this media? Accepted resolutions:", 
                                 acceptedResolutions, "Error: Forbidden resolution.")
             if not bool_and_file_scale[0]: 
@@ -22,11 +22,33 @@ def maybe_add_gather_file_and_info():
                                 acceptedCodecs, "Error: Forbidden codec.")
             if not bool_and_file_codec[0]:
                 break;
+
+            # output name may only be applicable in api.py, where the file output name is given.
             bool_and_file_output_name = maybe_name_file("What is the output name of your file?")
             if not bool_and_file_output_name[0]:
                 break;
             print(bool_and_file_scale[1], bool_and_file_codec[1], bool_and_file_output_name[1])
             currently_getting_info = False # end while loop
+
+        add_information_to_db('image-database.db', bool_and_file_name[1], bool_and_file_scale[1], bool_and_file_codec[1], bool_and_file_output_name[1], convertToBinaryData(bool_and_file_name[1]))
+
+# connect to db and add information
+def add_information_to_db(db, name, scale, codec, output_name, media):
+    conn = sqlite3.connect(db)
+
+    cursor = conn.cursor()
+
+    cursor.execute("INSERT INTO files VALUES('" + name + "', '" + scale + "', '" + codec + "', '" + output_name + "', '" + media + "')")
+
+    conn.commit()
+    conn.close()
+
+# create BLOB
+def convertToBinaryData(filename):
+    # Convert digital data to binary format
+    with open(filename, 'rb') as file:
+        blobData = file.read()
+    return blobData
 
 # Generic: Ask to gather information array and
 # if information is not in array error out and return tuple (False,info)
@@ -34,7 +56,7 @@ def maybe_add_gather_file_and_info():
 def is_get_info_on_arr(question, arr, error_str):
     print(question)
     print(arr)
-    info = str(intput())
+    info = str(input())
     if info not in arr:
         print(error_str)
         return (False,info)
@@ -47,7 +69,7 @@ def maybe_name_file(question, file_name):
     currently_add_file = is_search_file_forbidden(file_name)
     if not currently_add_file:
         return False
-    return True
+    return (True, file_name)
     # Naming file logic goes here #
 
 # Given a Boolean if False print error 
@@ -55,19 +77,39 @@ def maybe_name_file(question, file_name):
 def is_search_file_forbidden(file_name):
     search = re.search("/><|:&", file_name) 
     if search:
-        print("Error: Inputted a character 
-            that does not conform to linux
-            filenaming convention")
+        print(  "Error: Inputted a character" +
+                "that does not conform to linux" +
+                "filenaming convention"
+                )
     return search
 
 # TODO
 # Runs ffmpeg command on filen_name specified
 # With accepted_resolution, codecs
 # Will always run with -crf 17, and -preset veryslow
-def run_ffmpeg(file_name, resolution, codec):
-    # Logic to conver file_name to dash separated file_name
-    # and additional meta data e.g. to "file-name-4k.mkv"
-    # os.execute(fmmpeg_command) # Shell command, not Yet implemented
-    return False
+# def run_ffmpeg(file_name, resolution, codec):
+#     # Logic to convert file_name to dash separated file_name
+#     # and additional meta data e.g. to "file-name-4k.mkv"
+#     if("." not in file_name):           # NEED TO CHECK IF THIS WORKS
+#         print("Invalid file name.")
+#         raise Exception("Invalid file name.")
+
+#     file_name_and_type = file_name.split(".")
+#     words = file_name_and_type[0].split(" ")
+#     file_name_DB = ""
+#     for i in words:
+#         file_name_DB += i + "-"
+
+#     file_name_DB = file_name_DB[0:-2] #This gets rid of last "-" NOTE: MAY NOT WORK
+#     file_name_DB += file_name_and_type[1]
+
+#     ffmpeg_command = (  "ffmpeg -i video.mp4 \\" +
+#                         "-vf scale=1920:1080 \\" +
+#                         "-c:v libx264 -preset veryslow \\" +
+#                         "-crf 0 video-output.mp4"
+#                     )
+
+#     os.execute(fmmpeg_command) # Shell command, not Yet implemented
+#     return False
 
 maybe_add_gather_file_and_info()
