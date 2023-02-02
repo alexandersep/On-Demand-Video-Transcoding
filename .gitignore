@@ -1,0 +1,4 @@
+# ignore all pychache folder across the repo
+**/__pycache__/ 
+# ignore video directory
+videos/
