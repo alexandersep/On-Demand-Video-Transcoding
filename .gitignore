@@ -1,0 +1,5 @@
+# Ingnore __pycache__
+**/__pycache__
+
+# Ignore videos directory
+videos/
