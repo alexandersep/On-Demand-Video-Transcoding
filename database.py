@@ -23,20 +23,13 @@ class Video:
             SELECT * FROM videos where Resolution = (?)""", (column,))
 
 def main():
-    #videos = Video("videos.db") # Create Video object
-    ## Some examples on how to run these python methods
-    #videos.insert_six("SD","480p","4:3","640x480","100MB","/videos/video1-sd.mkv")
-    #videos.insert_six("SD","480p","4:3","640x480","100MB","/videos/video2-sd.mkv")
-    #videos.insert_six("HD","720p","16:9","1280x720","300MB","/videos/video2-hd.mkv")
-    #res = videos.search_column("SD") 
-    #print(res.fetchall()) # prints result of everything that matched with SD
-    db = Video("test.db")
-    db.insert_six("Test_SD","Test_480p","Test_4:3",
-        "Test_640x480","Test_100MB",
-        "Test_/videos/video1-sd.mkv")
-    test_sd_search_res = db.search_column("Test_SD")
-    print(test_sd_search_res.fetchall())
-    
+    videos = Video("videos.db") # Create Video object
+    # Some examples on how to run these python methods
+    videos.insert_six("SD","480p","4:3","640x480","100MB","/videos/video1-sd.mkv")
+    videos.insert_six("SD","480p","4:3","640x480","100MB","/videos/video2-sd.mkv")
+    videos.insert_six("HD","720p","16:9","1280x720","300MB","/videos/video2-hd.mkv")
+    res = videos.search_column("SD") 
+    print(res.fetchall()) # prints result of everything that matched with SD
 
 if __name__ == "__main__":
     main()
