@@ -22,15 +22,15 @@ def maybe_add_gather_file_and_info():
                                 acceptedCodecs, "Error: Forbidden codec.")
             if not bool_and_file_codec[0]:
                 break;
-            bool_and_file_output_name = maybe_name_file("What is the output name of your file?", file_name)
+            bool_and_file_output_name = maybe_name_file("What is the output name of your file?")
             if not bool_and_file_output_name[0]:
                 break;
             print(bool_and_file_scale[1], bool_and_file_codec[1], bool_and_file_output_name[1])
             currently_getting_info = False # end while loop
 
 # Generic: Ask to gather information array and
-# if information is not in array error out and erturn False
-# If not erroring, return True
+# if information is not in array error out and return tuple (False,info)
+# If not erroring, return (True,info)
 def is_get_info_on_arr(question, arr, error_str):
     print(question)
     print(arr)
@@ -60,6 +60,7 @@ def is_search_file_forbidden(file_name):
             filenaming convention")
     return search
 
+# TODO
 # Runs ffmpeg command on filen_name specified
 # With accepted_resolution, codecs
 # Will always run with -crf 17, and -preset veryslow
