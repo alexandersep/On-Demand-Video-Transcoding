@@ -8,12 +8,10 @@ def add_information_to_db(db):
     conn = sqlite3.connect(db)
 
     cursor = conn.cursor()
-
+    
     cursor.execute("""CREATE TABLE files (
                     file_name text NOT NULL,
                     file_scale text NOT NULL,
-                    file_codec text NOT NULL,
-                    file_output_name text NOT NULL,
                     media BLOB NOT NULL
     )""")
 
