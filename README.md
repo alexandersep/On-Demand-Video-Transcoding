@@ -17,6 +17,7 @@ NOTE: For all installation steps additional steps will probably be required, whi
 1. Install NodeJS [here][3], this comes with Node Package manager(NPM).
 2. A ReactJS app should already be created but if you ever want to create your own ReactJS app with "boiler-plate" code input `npx create-react-app my-app` into your console.
 3. If all the dependencies are not installed on your system, type `npm i` into the console while in this directory.
+4. Run the website off your local machine by typing `npm start` into your console.
 
 ### Back End
 
@@ -28,6 +29,7 @@ NOTE: For all installation steps additional steps will probably be required, whi
 6. In the repository folder, in your CLI of choice input `pip install sqlite3` and `pip install flask`. (It shouldn't matter which directory you type it in but to be safe do it in the Repo)
 7. Install ffmpeg [here][4], I recommend downloading from the packages and executable files, otherwise you'll have to compile it yourself.
 8. Follow a tutorial on how to install ffmpeg.
+9. Run the Python API by pressing F5.
 
 ## Contributors
 

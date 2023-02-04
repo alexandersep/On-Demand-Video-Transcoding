@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
 import sqlite3
-
+import base64
+import tempfile
 import os
 
 app = Flask(__name__)
@@ -18,29 +19,41 @@ class transcoder(Resource):
 
         args = parser.parse_args()
 
-        # transcodes image
-        os.system(  "ffmpeg -i " + args['mediaName'] + " \\ "           +
-                    "-vf scale=" + args['mediaScale'] + " \\ "           +
-                    "-c:v " + args['mediaEncoding'] + " -preset veryslow \\ "  +
-                    "-crf 0 " + args['mediaNameOutput'] 
-                    )
+        
 
         # to be completed: 
         ## store images on database, 
         ## have image be stored after transcoding, 
         ## send image in return statement as BLOB.
         db_connection = connection('image-database.db')
-        db_connection_temp = temp_connection()
 
         # creates db cursor
         main_cursor = db_connection.cursor()
 
-        
-        # placeholder
-        return ("Media Name: " + args['mediaName'] + 
-        "\nMedia Scale:  " + args['mediaScale'] + 
-        "\nMedia Encoding" + args['mediaEncoding'] + 
-        "\nMedia Output Name:  " + args['mediaNameOutput']) 
+        # NOTE: below probably doesn't work
+        # searches for requested file
+        file_name = main_cursor.execute("SELECT file_name FROM files WHERE (file_name = " +  args['mediaName'] + ")")
+
+        # if the file is found
+        if(file_name == args['mediaName']):
+            # save as image temporarily under the same name
+            with tempfile.NamedTemporaryFile(mode="wb") as media:
+                # save image by decoding BLOB, by finding image in the same row as the file_name
+                media.write(base64.decodebytes(main_cursor.execute("SELECT media, file_name FROM files WHERE (file_name = " +  args['mediaName'] + ")")))
+
+                # transcodes image
+                os.system(  "ffmpeg -i " + media.name + " \\ "           +
+                            "-vf scale=" + args['mediaScale'] + " \\ "           +
+                            "-c:v " + args['mediaEncoding'] + " -preset veryslow \\ "  +
+                            "-crf 0 ./transcoded-images/" + args['mediaNameOutput'] 
+                            )
+            
+            db_connection.close()
+
+            return 1
+        else:
+            db_connection.close()
+            return "ERROR: Media not found."
 
 # API endpoint
 api.add_resource(transcoder, '/transcoder')
@@ -50,12 +63,6 @@ api.add_resource(transcoder, '/transcoder')
 # NOTE: Should probably have a try catch statement
 def connection(db):
     conn = sqlite3.connect(db)
-
-    return conn
-
-# temporary db connection, for when we need to store the image temporarily after transcoding.
-def temp_connection():
-    conn = sqlite3.connect(':memory:')
 
     return conn
 
