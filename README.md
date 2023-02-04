@@ -46,8 +46,6 @@ NOTE: For all installation steps additional steps will probably be required, whi
   * Rehann Viswanathan
   * Yuxin Wan
 
-## Links
-
 [1]: https://www.sqlite.org/download.html
 [2]: https://pypi.org/project/pip/#files
 [3]: https://nodejs.org/en/download/
