@@ -8,8 +8,6 @@ Project is from a Trinity Module for third and second years
 We have been tasked with creating an on demand video transcoding application.
 We will be using ReactJS for the front end and a Python API using flask for the majority of the back end.
 
-[TOC]
-
 ## Project Initialisation
 
 NOTE: For all installation steps additional steps will probably be required, which google can help with.
