@@ -1,27 +1,37 @@
 import './App.css';
 
 function App() {
-  // let displayImageCheck = false;
+  let displayImageCheck = false;
 
   //returns URL to display image
   function transcodeImage(mediaName, mediaScale, mediaEncoding, mediaNameOutput){
     let imageBLOB;
-    fetch('http://127.0.0.1:5000/transcoder', {
+    fetch('http://127.0.0.1:4000/transcoder', {
       method: 'POST',
       body: JSON.stringify({
         "mediaName": mediaName,
         "mediaScale": mediaScale,
         "mediaEncoding": mediaEncoding,
         "mediaNameOutput": mediaNameOutput,
-      })
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     }).then((res) => res.json())
     .then((blob) => {
-      console.log(blob);
+      let binaryData = [];
+      binaryData.push(blob)
+      imageBLOB = new Blob(binaryData);
     }).catch((err) =>{
       console.log(err.message);
     });
 
-    return URL.createObjectURL()
+    return URL.createObjectURL(imageBLOB);
+  }
+
+  function imageShown(){
+    console.log("WORKS!")
+    displayImageCheck = true;
   }
 
   function displayImage(condition){
@@ -35,15 +45,8 @@ function App() {
 
   return (
     <div className="App">
-      {/* <button 
-      className="transcode-button" 
-      onClick={displayImageCheck = true}
-      >Transcode Image</button>
-      {displayImage(displayImageCheck)} */}
-      <button 
-      className="transcode-button" 
-      onClick={console.log("WORKS")}
-      >Transcode Image</button>
+      <button className="transcode-button" onClick={imageShown()}>Transcode Image</button>
+      {displayImage(displayImageCheck)}
     </div>
   );
 }

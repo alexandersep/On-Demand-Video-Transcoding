@@ -2,11 +2,13 @@ from flask import Flask
 from flask_restful import Resource, Api, reqparse
 import sqlite3
 import base64
-import tempfile
 import os
+import io
+import PIL.Image as Image
 
 app = Flask(__name__)
 api = Api(app)
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 # this class will accept the post req. from front end, run the command, and send back the media
 class transcoder(Resource):
@@ -25,32 +27,38 @@ class transcoder(Resource):
         ## store images on database, 
         ## have image be stored after transcoding, 
         ## send image in return statement as BLOB.
-        db_connection = connection('image-database.db')
+        db_path = os.path.join(__location__, 'image-database.db')
+        db_connection = connection(db_path)
 
         # creates db cursor
         main_cursor = db_connection.cursor()
 
         # NOTE: below probably doesn't work
         # searches for requested file
-        file_name = main_cursor.execute("SELECT file_name FROM files WHERE (file_name = " +  args['mediaName'] + ")")
+        file_name = main_cursor.execute("SELECT file_name FROM files WHERE file_name = '" +  args['mediaName'] + "'")
+        # file_name = main_cursor.execute("SELECT file_name FROM files WHERE file_name = 'house.jpg'")
+        
+        file_name = main_cursor.fetchone()
 
         # if the file is found
-        if(file_name == args['mediaName']):
+        if(file_name[0] == args['mediaName']):
             # save as image temporarily under the same name
-            with tempfile.NamedTemporaryFile(mode="wb") as media:
+            with open(__location__ + "/" + args['mediaName'], 'wb') as media:
                 # save image by decoding BLOB, by finding image in the same row as the file_name
-                media.write(base64.decodebytes(main_cursor.execute("SELECT media, file_name FROM files WHERE (file_name = " +  args['mediaName'] + ")")))
+                file_media = main_cursor.execute("SELECT media FROM files WHERE (file_name='" +  args['mediaName'] + "')")
+                file_media = main_cursor.fetchone()
+                image = Image.open(io.BytesIO(file_media[0]))
+                image.save(__location__ + "/" + args['mediaName'])
 
                 # transcodes image
-                os.system(  "ffmpeg -i " + media.name + " \\ "           +
+                os.system(  "ffmpeg -i " + __location__ + "\\" + args['mediaName'] + " \\ " +
                             "-vf scale=" + args['mediaScale'] + " \\ "           +
                             "-c:v " + args['mediaEncoding'] + " -preset veryslow \\ "  +
-                            "-crf 0 ./transcoded-images/" + args['mediaNameOutput'] 
+                            "-crf 0 " + args['mediaNameOutput'] 
                             )
             
             db_connection.close()
-
-            return 1
+            return convertToBinaryData(args['mediaName'])
         else:
             db_connection.close()
             return "ERROR: Media not found."
@@ -58,14 +66,19 @@ class transcoder(Resource):
 # API endpoint
 api.add_resource(transcoder, '/transcoder')
 
-
 # db connection 
 # NOTE: Should probably have a try catch statement
 def connection(db):
     conn = sqlite3.connect(db)
-
     return conn
+
+# create BLOB
+def convertToBinaryData(filename):
+    # Convert digital data to binary format
+    with open(filename, 'rb') as file:
+        blobData = file.read()
+    return blobData
 
 # runs program if running from this file
 if __name__ == '__main__':
-    app.run()
+    app.run(port=4000, debug=True)
