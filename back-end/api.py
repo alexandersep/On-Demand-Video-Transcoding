@@ -51,6 +51,7 @@ class transcoder(Resource):
                 image.save(__location__ + "/" + args['mediaName'])
 
                 # transcodes VIDEO
+                # NOTE: this can work for both video and images if you give it the argument -frames:v 1, from what I've seen online
                 # os.system(  "ffmpeg -i " + __location__ + "\\" + args['mediaName'] + 
                 #             " -vf scale=" + args['mediaScale'] +
                 #             " -c:v " + args['mediaEncoding'] + " -preset veryslow"  +
