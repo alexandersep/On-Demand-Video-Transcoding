@@ -50,12 +50,20 @@ class transcoder(Resource):
                 image = Image.open(io.BytesIO(file_media[0]))
                 image.save(__location__ + "/" + args['mediaName'])
 
-                # transcodes image
-                os.system(  "ffmpeg -i " + __location__ + "\\" + args['mediaName'] + " \\ " +
-                            "-vf scale=" + args['mediaScale'] + " \\ "           +
-                            "-c:v " + args['mediaEncoding'] + " -preset veryslow \\ "  +
-                            "-crf 0 " + args['mediaNameOutput'] 
-                            )
+                # transcodes VIDEO
+                # os.system(  "ffmpeg -i " + __location__ + "\\" + args['mediaName'] + 
+                #             " -vf scale=" + args['mediaScale'] +
+                #             " -c:v " + args['mediaEncoding'] + " -preset veryslow"  +
+                #             " -crf 0 " + args['mediaNameOutput'] 
+                # )
+
+                # trancodes image
+                os.system(  "ffmpeg -i " + __location__ + "\\" + args['mediaName'] + 
+                            " -vf scale=" + args['mediaScale'] +
+                            " -c:v " + args['mediaEncoding'] + " -preset veryslow "  +
+                            args['mediaNameOutput'] 
+                )
+                  
             
             db_connection.close()
             return convertToBinaryData(args['mediaName'])

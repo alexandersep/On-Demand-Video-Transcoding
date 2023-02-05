@@ -1,7 +1,7 @@
 import sqlite3, re, os
 
 acceptedResolutions = ["640:480", "1280:720","1920:1080","2560:1440","3840:2160"]
-acceptedCodecs = ["H264"]
+acceptedCodecs = ["libx264"]
 
 # Ask to add file, and do so if needed 
 # Ensure file conforms to linux naming convention
