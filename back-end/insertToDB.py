@@ -31,8 +31,8 @@ def maybe_add_gather_file_and_info():
     #         # print(bool_and_file_scale[1], bool_and_file_codec[1], bool_and_file_output_name[1])
     #         currently_getting_info = False # end while loop
 
-        # add_information_to_db('image-database.db', bool_and_file_name[1], bool_and_file_scale[1], convertToBinaryData(bool_and_file_path))
-        add_information_to_db('image-database.db', 'house.jpg', '1280:720', convertToBinaryData('./assets/house.jpg'))
+        # add_information_to_db('video-database.db', bool_and_file_name[1], bool_and_file_scale[1], convertToBinaryData(bool_and_file_path))
+        add_information_to_db('video-database.db', 'meerkats.mp4', '1920:1080', './assets/meerkats.mp4')
 
 # connect to db and add information
 def add_information_to_db(db, name, scale, media):
@@ -49,11 +49,12 @@ def add_information_to_db(db, name, scale, media):
     conn.close()
 
 # create BLOB
-def convertToBinaryData(filename):
-    # Convert digital data to binary format
-    with open(filename, 'rb') as file:
-        blobData = file.read()
-    return blobData
+# NOTE: This is not necessary or needed anymore
+# def convertToBinaryData(filename):
+#     # Convert digital data to binary format
+#     with open(filename, 'rb') as file:
+#         blobData = file.read()
+#     return blobData
 
 # Generic: Ask to gather information array and
 # if information is not in array error out and return tuple (False,info)

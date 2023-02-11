@@ -27,7 +27,7 @@ class transcoder(Resource):
         ## store images on database, 
         ## have image be stored after transcoding, 
         ## send image in return statement as BLOB.
-        db_path = os.path.join(__location__, 'image-database.db')
+        db_path = os.path.join(__location__, 'video-database.db')
         db_connection = connection(db_path)
 
         # creates db cursor
@@ -58,18 +58,13 @@ class transcoder(Resource):
                 # )
 
                 # trancodes image
-                os.system(  "ffmpeg -i " + __location__ + "\\" + args['mediaName'] + 
-                            " -vf scale=" + args['mediaScale'] +
-                            " -c:v " + args['mediaEncoding'] + " -preset veryslow "  +
-                            args['mediaNameOutput'] 
-                )
                   
             
             db_connection.close()
             return convertToBinaryData(args['mediaName'])
         else:
             db_connection.close()
-            return "ERROR: Media not found."
+            return "ERROR: Media   not found."
 
 # API endpoint
 api.add_resource(transcoder, '/transcoder')
