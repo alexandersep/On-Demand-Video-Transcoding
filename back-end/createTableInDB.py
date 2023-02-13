@@ -9,13 +9,11 @@ def add_table_to_db(db):
 
     cursor = conn.cursor()
     
-    # cursor.execute("""CREATE TABLE files (
-    #                 file_name text NOT NULL,
-    #                 file_scale text NOT NULL,
-    #                 file_path text NOT NULL
-    # )""")
-
-    cursor.execute("DROP TABLE files")
+    cursor.execute("""CREATE TABLE files (
+                    file_name text NOT NULL,
+                    file_scale text NOT NULL,
+                    file_path text NOT NULL
+    )""")
 
     conn.commit()
     conn.close()

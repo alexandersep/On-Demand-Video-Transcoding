@@ -43,25 +43,20 @@ class transcoder(Resource):
         # if the file is found
         if(file_name[0] == args['mediaName']):
             # save as image temporarily under the same name
-            with open(__location__ + "/" + args['mediaName'], 'wb') as media:
-                # save image by decoding BLOB, by finding image in the same row as the file_name
-                file_media = main_cursor.execute("SELECT media FROM files WHERE (file_name='" +  args['mediaName'] + "')")
-                file_media = main_cursor.fetchone()
-                image = Image.open(io.BytesIO(file_media[0]))
-                image.save(__location__ + "/" + args['mediaName'])
+            # with open(__location__ + "/" + args['mediaName'], 'wb') as media:
+            # save image by decoding BLOB, by finding image in the same row as the file_name
+            file_media = main_cursor.execute("SELECT file_path FROM files WHERE (file_name='" +  args['mediaName'] + "')")
+            file_media = main_cursor.fetchone()
 
-                # transcodes VIDEO
-                # os.system(  "ffmpeg -i " + __location__ + "\\" + args['mediaName'] + 
-                #             " -vf scale=" + args['mediaScale'] +
-                #             " -c:v " + args['mediaEncoding'] + " -preset veryslow"  +
-                #             " -crf 0 " + args['mediaNameOutput'] 
-                # )
+            # transcodes video
+            os.system(  "ffmpeg -i " + __location__ + "\\assets\\" + args['mediaName'] + 
+                        " -vf scale=" + args['mediaScale'] +
+                        " -c:v " + args['mediaEncoding'] + " -preset veryslow"  +
+                        " " + __location__ + "\\" + args['mediaNameOutput'] 
+            )           
 
-                # trancodes image
-                  
-            
             db_connection.close()
-            return convertToBinaryData(args['mediaName'])
+            return convertToBinaryData(__location__ + "\\transcoded-assets\\" + args['mediaName'])
         else:
             db_connection.close()
             return "ERROR: Media   not found."

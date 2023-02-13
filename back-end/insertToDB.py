@@ -35,14 +35,14 @@ def maybe_add_gather_file_and_info():
         add_information_to_db('video-database.db', 'meerkats.mp4', '1920:1080', './assets/meerkats.mp4')
 
 # connect to db and add information
-def add_information_to_db(db, name, scale, media):
+def add_information_to_db(db, name, scale, path):
     conn = sqlite3.connect(db)
 
     cursor = conn.cursor()
 
     db_query = """INSERT INTO files
-            (file_name, file_scale, media) VALUES (?, ?, ?)"""
-    db_tuple = (name, scale, media)
+            (file_name, file_scale, file_path) VALUES (?, ?, ?)"""
+    db_tuple = (name, scale, path)
     cursor.execute(db_query, db_tuple) # str converts bytes to string
 
     conn.commit()
